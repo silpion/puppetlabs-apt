@@ -62,7 +62,6 @@ define apt::source(
       logoutput   => 'on_failure',
       refreshonly => true,
       subscribe   => File["${name}.list"],
-      before      => Exec['apt_update'],
     }
   }
 
