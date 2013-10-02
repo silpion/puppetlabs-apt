@@ -13,7 +13,8 @@ define apt::source(
   $key_content       = false,
   $key_source        = false,
   $pin               = false,
-  $architecture      = undef
+  $architecture      = undef,
+  $update            = Exec['apt_update'],
 ) {
 
   include apt::params
@@ -62,7 +63,7 @@ define apt::source(
       logoutput   => 'on_failure',
       refreshonly => true,
       subscribe   => File["${name}.list"],
-      before      => Exec['apt_update'],
+      before      => $update,
     }
   }
 

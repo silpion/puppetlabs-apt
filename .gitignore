@@ -1,5 +1,9 @@
 *.swp
 pkg/
 Gemfile.lock
-spec/fixtures/manifests
+spec/fixtures/
 metadata.json
+.ruby-version
+.rspec_system
+.bundle
+vendor/
