@@ -16,7 +16,8 @@ describe 'apt::source', :type => :define do
       :key_server         => 'keyserver.ubuntu.com',
       :key_content        => false,
       :key_source         => false,
-      :pin                => false
+      :pin                => false,
+      :subscribe          => false,
     }
   end
 
@@ -30,7 +31,8 @@ describe 'apt::source', :type => :define do
       :key                => 'key_name',
       :key_server         => 'keyserver.debian.com',
       :pin                => '600',
-      :key_content        => 'ABCD1234'
+      :key_content        => 'ABCD1234',
+      :subscribe          => "Exec['apt_update']",
     },
     {
       :key                => 'key_name',
@@ -128,7 +130,26 @@ describe 'apt::source', :type => :define do
           should_not contain_exec("Required packages: '#{param_hash[:required_packages]}' for #{title}").with({
             "command"     => "/usr/bin/apt-get -y install #{param_hash[:required_packages]}",
             "subscribe"   => "File[#{title}.list]",
-            "refreshonly" => true
+            "refreshonly" => true,
+            "before"      => false,
+          })
+        end
+      }
+
+      it {
+        if param_hash[:subscribe]
+          should contain_exec("Required packages: '#{param_hash[:required_packages]}' for #{title}").with({
+            "command" => "/usr/bin/apt-get -y install #{param_hash[:required_packages]}",
+            "subscribe"   => "File[#{title}.list]",
+            "refreshonly" => true,
+            "before"      => 'Exec[apt_update]'
+          })
+        else
+          should_not contain_exec("Required packages: '#{param_hash[:required_packages]}' for #{title}").with({
+            "command"     => "/usr/bin/apt-get -y install #{param_hash[:required_packages]}",
+            "subscribe"   => "File[#{title}.list]",
+            "refreshonly" => true,
+            "before"      => false,
           })
         end
       }
